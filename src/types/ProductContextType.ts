@@ -8,6 +8,8 @@ export type ProductContextType = {
   setPageName: (pageName: string) => void;
   page?: number;
   setPage: (page: number) => void;
+  categories?: string[];
+  setCategories: (categories?: string[]) => void;
   maxPrice?: number;
   total?: number;
 };

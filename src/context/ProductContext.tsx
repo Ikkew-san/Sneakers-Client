@@ -15,13 +15,14 @@ export const ProductContextProvider = ({ children }: ProductContextProvider) => 
   const [products, setProducts] = useState<productType[]>();
   const [pageName, setPageName] = useState<string>();
   const [page, setPage] = useState<number>(Number(searchParams.get("page")) || 1);
+  const [categories, setCategories] = useState(searchParams.get("categories")?.split(",") || []);
 
   const [maxPrice, setMaxPrice] = useState<number>();
   const [total, setTotal] = useState<number>();
 
   const getAPIProducts = async () => {
-    const categories = pageName != "" ? pageName : searchParams.get("categories")?.split(",");
-    console.log(page);
+    // const categories = pageName != "" ? pageName : searchParams.get("categories")?.split(",");
+
     const price = searchParams
       .get("price")
       ?.split(",")
@@ -45,16 +46,26 @@ export const ProductContextProvider = ({ children }: ProductContextProvider) => 
       params.set(key, value.toString());
       return params;
     });
-    getAPIProducts();
   };
 
   useEffect(() => {
     getAPIProducts();
-  }, [pageName]);
+  }, [pageName, page, categories]);
 
   return (
     <ProductContext.Provider
-      value={{ products, getAPIProducts, queryfilter, setPageName, page, setPage, maxPrice, total }}
+      value={{
+        products,
+        getAPIProducts,
+        queryfilter,
+        setPageName,
+        page,
+        setPage,
+        categories,
+        setCategories,
+        maxPrice,
+        total,
+      }}
     >
       {children}
     </ProductContext.Provider>

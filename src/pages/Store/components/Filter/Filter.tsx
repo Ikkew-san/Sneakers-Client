@@ -10,7 +10,8 @@ type Props = {
 
 const Filter: React.FC<Props> = ({ category }) => {
   const [searchParams] = useSearchParams();
-  const [categories] = useState(searchParams.get("categories")?.split(","));
+  const { queryfilter, maxPrice, categories, setCategories } = useProduct();
+  // const [categories] = useState(searchParams.get("categories")?.split(","));
   const [price] = useState(
     searchParams
       .get("price")
@@ -20,7 +21,15 @@ const Filter: React.FC<Props> = ({ category }) => {
       })
   );
   const ratings = searchParams.get("ratings");
-  const { maxPrice, queryfilter } = useProduct();
+
+  const changeCategories = async (value, action) => {
+    if (action) {
+      setCategories([...categories, value]);
+    } else {
+      setCategories(categories?.filter((val) => val != value));
+    }
+    queryfilter("categories", categories);
+  };
 
   return (
     <>
@@ -34,9 +43,10 @@ const Filter: React.FC<Props> = ({ category }) => {
               <input
                 type="checkbox"
                 name="categories"
+                value="men"
                 defaultChecked={categories?.includes("men")}
-                onChange={() => {
-                  queryfilter("categories", "men");
+                onChange={(e) => {
+                  changeCategories(e.target.value, e.target.checked);
                 }}
               />
             </label>
@@ -45,9 +55,10 @@ const Filter: React.FC<Props> = ({ category }) => {
               <input
                 type="checkbox"
                 name="categories"
+                value="women"
                 defaultChecked={categories?.includes("women")}
-                onChange={() => {
-                  queryfilter("categories", "women");
+                onChange={(e) => {
+                  changeCategories(e.target.value, e.target.checked);
                 }}
               />
             </label>
@@ -56,9 +67,10 @@ const Filter: React.FC<Props> = ({ category }) => {
               <input
                 type="checkbox"
                 name="categories"
+                value="kid"
                 defaultChecked={categories?.includes("kid")}
-                onChange={() => {
-                  queryfilter("categories", "kid");
+                onChange={(e) => {
+                  changeCategories(e.target.value, e.target.checked);
                 }}
               />
             </label>

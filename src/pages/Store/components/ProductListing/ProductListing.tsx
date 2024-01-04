@@ -59,6 +59,7 @@ const ProductListing: React.FC = () => {
             total={total}
             itemRender={itemRender}
             onChange={(page) => {
+              setPage(page);
               queryfilter("page", page);
             }}
             pageSize={16}
