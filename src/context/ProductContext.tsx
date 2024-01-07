@@ -15,21 +15,21 @@ export const ProductContextProvider = ({ children }: ProductContextProvider) => 
   const [products, setProducts] = useState<productType[]>();
   const [pageName, setPageName] = useState<string>();
   const [page, setPage] = useState<number>(Number(searchParams.get("page")) || 1);
-  const [categories, setCategories] = useState(searchParams.get("categories")?.split(",") || []);
+  const [ratings, setRatings] = useState<number>(Number(searchParams.get("ratings")) || 0);
+  const [categories, setCategories] = useState<string[]>(searchParams.get("categories")?.split(",") || []);
 
   const [maxPrice, setMaxPrice] = useState<number>();
   const [total, setTotal] = useState<number>();
 
   const getAPIProducts = async () => {
-    // const categories = pageName != "" ? pageName : searchParams.get("categories")?.split(",");
-
-    const price = searchParams
+    const categories = (await pageName) != "" ? pageName : searchParams.get("categories")?.split(",");
+    const price = (await searchParams
       .get("price")
       ?.split(",")
       .map((val) => {
         return parseInt(val);
-      }) || [0, 0];
-    const ratings = Number(searchParams.get("ratings"));
+      })) || [0, 0];
+    console.log(categories, page, 16, price, ratings);
     try {
       const response = await getProducts(categories, page, 16, price, ratings);
       console.log(response.data);
@@ -50,7 +50,7 @@ export const ProductContextProvider = ({ children }: ProductContextProvider) => 
 
   useEffect(() => {
     getAPIProducts();
-  }, [pageName, page, categories]);
+  }, [pageName, page, categories, ratings]);
 
   return (
     <ProductContext.Provider
@@ -63,6 +63,8 @@ export const ProductContextProvider = ({ children }: ProductContextProvider) => 
         setPage,
         categories,
         setCategories,
+        ratings,
+        setRatings,
         maxPrice,
         total,
       }}

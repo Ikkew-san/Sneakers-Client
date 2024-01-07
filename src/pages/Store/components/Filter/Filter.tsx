@@ -1,35 +1,54 @@
+import { useEffect, useState } from "react";
 import { ConfigProvider, Slider } from "antd";
 import { StarFilled, StarOutlined } from "@ant-design/icons";
 import { useProduct } from "../../../../context/ProductContext";
 import { useSearchParams } from "react-router-dom";
-import { useState } from "react";
 
 type Props = {
   category: string;
 };
 
 const Filter: React.FC<Props> = ({ category }) => {
-  const [searchParams] = useSearchParams();
-  const { queryfilter, maxPrice, categories, setCategories } = useProduct();
-  // const [categories] = useState(searchParams.get("categories")?.split(","));
-  const [price] = useState(
-    searchParams
-      .get("price")
-      ?.split(",")
-      .map((val) => {
-        return parseInt(val);
-      })
-  );
-  const ratings = searchParams.get("ratings");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { queryfilter, maxPrice, categories, setCategories, ratings, setRatings } = useProduct();
+  const [iPrice, setIPrice] = useState<number[]>([0, 0]);
 
-  const changeCategories = async (value, action) => {
-    if (action) {
-      setCategories([...categories, value]);
+  const changeCategories = (value: string, action: boolean) => {
+    const data: string[] | undefined = action
+      ? [...(categories ?? ""), value]
+      : categories?.filter((val) => val != value);
+    if (data?.length != 0) {
+      queryfilter("categories", data);
     } else {
-      setCategories(categories?.filter((val) => val != value));
+      searchParams.delete("categories");
+      setSearchParams(searchParams);
     }
-    queryfilter("categories", categories);
+    setCategories(data!);
   };
+
+  const changeRatings = (num: number) => {
+    if (ratings != num) {
+      setRatings(num);
+      queryfilter("ratings", num);
+    } else {
+      setRatings(0);
+      searchParams.delete("ratings");
+      setSearchParams(searchParams);
+    }
+  };
+
+  useEffect(() => {
+    if (!searchParams.get("categories")) setCategories([]);
+    if (!searchParams.get("ratings")) setRatings(0);
+
+    const price = async () => {
+      const data = await [0, maxPrice!];
+      console.log(maxPrice);
+
+      if (!searchParams.get("price")) setIPrice(data);
+    };
+    price();
+  }, [category]);
 
   return (
     <>
@@ -44,7 +63,7 @@ const Filter: React.FC<Props> = ({ category }) => {
                 type="checkbox"
                 name="categories"
                 value="men"
-                defaultChecked={categories?.includes("men")}
+                checked={categories?.includes("men")}
                 onChange={(e) => {
                   changeCategories(e.target.value, e.target.checked);
                 }}
@@ -56,7 +75,7 @@ const Filter: React.FC<Props> = ({ category }) => {
                 type="checkbox"
                 name="categories"
                 value="women"
-                defaultChecked={categories?.includes("women")}
+                checked={categories?.includes("women")}
                 onChange={(e) => {
                   changeCategories(e.target.value, e.target.checked);
                 }}
@@ -68,7 +87,7 @@ const Filter: React.FC<Props> = ({ category }) => {
                 type="checkbox"
                 name="categories"
                 value="kid"
-                defaultChecked={categories?.includes("kid")}
+                checked={categories?.includes("kid")}
                 onChange={(e) => {
                   changeCategories(e.target.value, e.target.checked);
                 }}
@@ -89,9 +108,10 @@ const Filter: React.FC<Props> = ({ category }) => {
               <Slider
                 range
                 max={maxPrice}
-                defaultValue={price}
-                onChange={(e) => {
-                  //   setPrice(e);
+                defaultValue={[0, maxPrice!]}
+                value={iPrice}
+                onChange={(e) => setIPrice(e)}
+                onAfterChange={(e) => {
                   console.log(e);
                 }}
               />
@@ -107,8 +127,8 @@ const Filter: React.FC<Props> = ({ category }) => {
         <section>
           <p className="text-xl font-semibold mb-3">Ratings</p>
           <div className="flex flex-col space-y-2">
-            <div className={`flex justify-between pl-2  border-l-[6px] ${ratings == "1" ? "border-yellow-400" : ""}`}>
-              <a>
+            <div className={`flex justify-between pl-2  border-l-[6px] ${ratings == 1 ? "border-yellow-400" : ""}`}>
+              <a onClick={() => changeRatings(1)}>
                 <span className="space-x-1">
                   <StarFilled style={{ color: "gold" }} />
                   <StarOutlined />
@@ -119,8 +139,8 @@ const Filter: React.FC<Props> = ({ category }) => {
                 </span>
               </a>
             </div>
-            <div className={`flex justify-between pl-2  border-l-[6px] ${ratings == "2" ? "border-yellow-400" : ""}`}>
-              <a>
+            <div className={`flex justify-between pl-2  border-l-[6px] ${ratings == 2 ? "border-yellow-400" : ""}`}>
+              <a onClick={() => changeRatings(2)}>
                 <span className="space-x-1">
                   <StarFilled style={{ color: "gold" }} />
                   <StarFilled style={{ color: "gold" }} />
@@ -131,8 +151,8 @@ const Filter: React.FC<Props> = ({ category }) => {
                 </span>
               </a>
             </div>
-            <div className={`flex justify-between pl-2  border-l-[6px] ${ratings == "3" ? "border-yellow-400" : ""}`}>
-              <a>
+            <div className={`flex justify-between pl-2  border-l-[6px] ${ratings == 3 ? "border-yellow-400" : ""}`}>
+              <a onClick={() => changeRatings(3)}>
                 <span className="space-x-1">
                   <StarFilled style={{ color: "gold" }} />
                   <StarFilled style={{ color: "gold" }} />
@@ -143,8 +163,8 @@ const Filter: React.FC<Props> = ({ category }) => {
                 </span>
               </a>
             </div>
-            <div className={`flex justify-between pl-2  border-l-[6px] ${ratings == "4" ? "border-yellow-400" : ""}`}>
-              <a>
+            <div className={`flex justify-between pl-2  border-l-[6px] ${ratings == 4 ? "border-yellow-400" : ""}`}>
+              <a onClick={() => changeRatings(4)}>
                 <span className="space-x-1">
                   <StarFilled style={{ color: "gold" }} />
                   <StarFilled style={{ color: "gold" }} />
@@ -157,10 +177,10 @@ const Filter: React.FC<Props> = ({ category }) => {
             </div>
             <div
               className={`flex justify-between items-center pl-2  border-l-[6px] ${
-                ratings == "5" ? "border-yellow-400" : ""
+                ratings == 5 ? "border-yellow-400" : ""
               }`}
             >
-              <a>
+              <a onClick={() => changeRatings(5)}>
                 <span className="space-x-1">
                   <StarFilled style={{ color: "gold" }} />
                   <StarFilled style={{ color: "gold" }} />

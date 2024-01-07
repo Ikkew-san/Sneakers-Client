@@ -1,4 +1,3 @@
-// import { initialState } from "../reducer/ProductReducer";
 import { productType } from "./productType";
 
 export type ProductContextType = {
@@ -8,8 +7,10 @@ export type ProductContextType = {
   setPageName: (pageName: string) => void;
   page?: number;
   setPage: (page: number) => void;
+  ratings?: number;
+  setRatings: (ratings: number) => void;
   categories?: string[];
-  setCategories: (categories?: string[]) => void;
+  setCategories: (categories: string[]) => void;
   maxPrice?: number;
   total?: number;
 };

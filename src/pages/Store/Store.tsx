@@ -12,14 +12,13 @@ const Store: React.FC<Props> = ({ pageName }) => {
 
   useEffect(() => {
     setPageName(pageName);
-    // window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
   }, [pageName]);
 
   return (
     <article className="bg-white max-w-screen-xl mx-auto p-6">
       <div className="flex flex-row gap-8">
         <Filter category={pageName} />
-        <ProductListing />
+        <ProductListing category={pageName} />
       </div>
     </article>
   );

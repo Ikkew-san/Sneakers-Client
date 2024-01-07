@@ -1,13 +1,16 @@
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { HeartOutlined, StarFilled } from "@ant-design/icons";
 import { ConfigProvider, Pagination, PaginationProps } from "antd";
 import { useProduct } from "../../../../context/ProductContext";
 import { productType } from "../../../../types/productType";
+import { useEffect } from "react";
 
-const ProductListing: React.FC = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+type Props = {
+  category: string;
+};
+
+const ProductListing: React.FC<Props> = ({ category }) => {
   const { products, queryfilter, page, setPage, total } = useProduct();
-  const navigate = useNavigate();
 
   const itemRender: PaginationProps["itemRender"] = (_, type, originalElement) => {
     if (type === "prev") {
@@ -18,6 +21,10 @@ const ProductListing: React.FC = () => {
     }
     return originalElement;
   };
+
+  useEffect(() => {
+    setPage(1);
+  }, [category]);
 
   return (
     <section className="w-auto mx-auto">
